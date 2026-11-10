@@ -1,0 +1,15 @@
+{
+  "profile": {
+    "intro": "自己紹介・専門分野は準備中です。",
+    "about": "このサイトでは、大学生活の活動や制作の過程を記録していきます。大学・学部、学習内容、関心領域の詳細は準備中です。",
+    "education": "準備中",
+    "interests": "準備中"
+  },
+  "projects": [],
+  "activities": [],
+  "skills": [
+    { "category": "プログラミング", "items": [] },
+    { "category": "資格", "items": [] },
+    { "category": "語学", "items": [] }
+  ]
+}
