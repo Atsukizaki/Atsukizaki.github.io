@@ -1,112 +1,65 @@
-# Atsukizaki | University Portfolio
+﻿# 山崎温生のページ
 
-大学生活の活動・学習・制作を記録する、日本語中心のポートフォリオです。HTML / CSS / JavaScriptのみで動作し、ビルド、APIキー、バックエンド、有料サービスは不要です。Notionや非公開データとの自動連携はありません。
+Figmaをもとにした、日本語のポートフォリオです。HTML / CSS / JavaScriptのみで動作します。公開先は既存の `https://atsukizaki.github.io/` を維持します。mainへのマージと公開はレビュー後に行ってください。
 
-## 構成
+## プレビュー
 
-```text
-index.html              # Home / About / Projects / Activities / Skills / Contact
-assets/style.css        # レスポンシブデザイン・アニメーション
-assets/app.js           # JSON読み込み・カード描画・フィルタ・メニュー
-assets/favicon.svg      # サイトアイコン
-data/portfolio.json     # 公開するプロフィール・実績データ
-.nojekyll               # Jekyll処理を使わない静的配信
-README.md
-```
-
-## ローカルで確認
-
-Python 3がある環境で、リポジトリのルートから実行します。
+Node.jsをインストールした環境で、このフォルダーから実行します。
 
 ```sh
-python3 -m http.server 8000
+node scripts/preview.cjs
 ```
 
-`http://localhost:8000` を開きます。終了は `Ctrl+C`。JSONをfetchするため、HTMLの直接ダブルクリック（file://）ではなくHTTPサーバーを使ってください。外部フォントや外部JavaScriptへの依存はありません。
+`http://127.0.0.1:8000` をブラウザーで開きます。終了はCtrl+Cです。記録をJSONから読み込むため、HTMLのダブルクリックではなくHTTPサーバーを使用してください。
 
-## プロフィールを更新する
+## ページ構成
 
-`data/portfolio.json` の `profile` を編集します。
+- `index.html`：トップ。横長の自己紹介カードと、勉強記録・活動記録へのカード。
+- `about.html`：Figmaの自己紹介文、年代別の経歴、ソフトテニス・ピアノの紹介。
+- `study.html`：分野別の学習記録。
+- `activities.html`：楕円形の導線、実績一覧、ブログ。
+- `assets/style.css`：配色・余白・レスポンシブ設定。
+- `assets/app.js`：データ取得・検証、記録の表示、絞り込み、モバイルメニュー。
+- `assets/figma-ellipse.svg`：Figmaから取得した662×350の楕円形。CSSマスクで指定色を適用。
+- `data/portfolio.json`：学習記録・実績・ブログ。
+- `scripts/generate-pages.cjs`：共通ヘッダー・フッターとページ本文の生成元。
 
-- `intro`: Homeの短い自己紹介・専門分野
-- `about`: Aboutの紹介文
-- `education`: 大学・学部や大学で学んでいる内容
-- `interests`: 専門分野・関心領域
+HTMLは生成済みのためGitHub Pagesでビルドは不要です。`.nojekyll` を維持し、公開設定やドメインを変更していません。ページ・自己紹介文を編集する場合は `scripts/generate-pages.cjs` を編集して `node scripts/generate-pages.cjs` を実行し、生成HTMLもコミットしてください。Figma上の手動改行は、端末幅に応じて折り返すよう整理しています。大学2年という記載はFigma原文どおりです。
 
-現時点では確認済みの経歴・成果が提供されていないため、詳細は準備中、実績は空配列です。大学名、資格、語学力、受賞歴、数値などは本人が確認してから追加してください。表示名やContactリンクを変更する場合は `index.html` のタイトル・メタ情報・ヘッダー・フッター・GitHubリンクも更新します。
+## 記録の追加
 
-## プロジェクトを追加する
+`data/portfolio.json` の該当配列に、確認済みの内容だけを追加します。現在はすべて空で、架空の実績は含みません。
 
-`projects` 配列に次の形式のオブジェクトを追加します。以下は**形式説明用の架空例であり、本人の実績ではありません**。そのまま公開せず、確認済みの内容に置き換えてください。
+| 配列 | 表示先 | 使用できるカテゴリ |
+| --- | --- | --- |
+| `studies` | 勉強記録 | AI、プログラミング、統計学、経営学、会計学、その他 |
+| `achievements` | 実績一覧 | スポーツ、音楽、イベント、開発活動、その他 |
+| `posts` | ブログ | スポーツ、音楽、イベント、開発活動、その他 |
 
-```json
+各レコードには `title`（見出し）、`category`（上記のカテゴリ）、`date`（実在する日付をYYYY-MM-DD形式）、`description`（本文）を文字列で指定します。`url` は任意です。HTTP/HTTPSのURLだけをリンクとして表示し、外部リンクは新しいタブで開きます。本文の改行はJSON文字列の `\n` で指定できます。新しい日付順に表示し、カテゴリで絞り込めます。
+
+追加形式（説明用のプレースホルダー。本人の実績ではありません）：
+
+```text
 {
-  "title": "確認済みのプロジェクト名",
-  "category": "AI開発",
-  "description": "目的、自分の役割、取り組み、確認できる成果を記載します。",
-  "tags": ["実際に使った技術"],
-  "url": "https://github.com/OWNER/REPOSITORY"
-}
-```
-
-`title`、`category`、`description` は文字列、`tags` は文字列の配列です。表示順は配列順です。フィルタは `AI開発`、`機械学習`、`ハッカソン` に対応し、それ以外のカテゴリは `その他` に含まれます。複数の実績はオブジェクト間をカンマで区切ります。
-
-## 活動を追加する
-
-`activities` 配列に追加します。新しい日付順で表示します。
-
-```json
-{
-  "date": "2026-11-10",
-  "category": "学習記録",
-  "title": "確認済みの活動名",
-  "description": "実際に行った内容と学んだことを記載します。",
+  "title": "確認済みの記録タイトル",
+  "category": "上記の対応カテゴリ",
+  "date": "実際の日付（YYYY-MM-DD）",
+  "description": "確認済みの本文",
   "url": ""
 }
 ```
 
-日付は実在する日付を `YYYY-MM-DD` で記載します。カテゴリは課外活動・イベント・学習記録など自由です。`url` は任意で、省略または空文字にするとリンクは表示されません。プロジェクト・活動ともHTTP/HTTPSの絶対URLのみ表示します。
+JSONはダブルクォートを使い、末尾カンマやコメントを含めないでください。データ取得・検証に失敗した場合は空の実績と区別してエラーを表示します。JavaScriptが無効でも、自己紹介・経歴とページ間の移動は利用できます。
 
-## スキルを追加する
+## デザインと確認
 
-`skills` の該当カテゴリの `items` に文字列を追加します。
+背景 `#F7F5F0`、文字・メイン色 `#172A43`、カード `#FFFFFF`、補助文字 `#657184`、境界線 `#DFE3E8`。本文16〜17px、主要見出し最大48px。PCの2列をスマートフォンでは1列に変更します。日本語システムフォントを使用し、外部フォントやCDNへ依存しません。動きはホバーとスクロールに限定し、動きを減らす端末設定に対応します。
 
-```json
-{
-  "category": "プログラミング",
-  "items": ["技術名：実際に経験した内容と利用範囲"]
-}
-```
+チェック：`node --check assets/app.js`、`node --test tests/records.test.cjs`。ブラウザーでは4ページ、モバイルメニュー、記録の絞り込み、楕円形のページ内移動を確認してください。
 
-資格は正式名称と取得年月、語学は確認済みの試験名・スコア・受験年月などを記載すると伝わりやすくなります。裏付けのない熟練度やパーセント表示は使っていません。空の項目は準備中として表示します。
+## 変更・公開の手順
 
-## データ更新時の確認
+作業ブランチ `feat/figma-portfolio-redesign` からmain向けPRでレビューします。この作業ではmainへマージせず、Pagesの設定や公開ブランチも変更しません。
 
-1. 公開してよい事実だけを入力し、個人情報や非公開情報を含めない。
-2. JSONではダブルクォートを使い、コメントや末尾カンマを書かない。
-3. `python3 -m json.tool data/portfolio.json` で構文を確認する。
-4. ローカルでPC幅・スマートフォン幅、メニュー、フィルタ、外部リンクを確認する。
-5. 新しいブランチで変更し、Pull Request経由でmainにマージする。
-
-データ取得・形式検証に失敗した場合はエラーメッセージを表示します。JavaScript無効時もページの基本構成とGitHubリンクを利用できますが、JSONの内容は表示されません。JSONの文字列はHTMLとして解釈せずテキストとして描画します。
-
-## GitHub Pagesで公開する
-
-この初期実装は作業ブランチとPRで提供し、mainへのマージやPages設定の変更は行いません。
-
-レビュー後にPRをmainへマージし、GitHubのリポジトリで以下を設定してください。
-
-1. **Settings → Pages → Build and deployment** を開く。
-2. **Source: Deploy from a branch** を選択する。
-3. **Branch: main / (root)** を選び **Save**。
-4. デプロイ完了後、`https://atsukizaki.github.io/` を確認する。
-
-すでにGitHub Actionsなど別の公開方法を使っている場合は、その設定との整合を確認してください。独自ドメインは不要です。GitHub Pagesで公開する情報は誰でも閲覧できる前提で管理してください。
-
-## アクセシビリティと動作
-
-- 日本語のlang属性、本文スキップリンク、キーボードフォーカスを用意。
-- メニューは開閉状態を通知し、Escapeで閉じることができます。
-- 絞り込み結果の件数を読み上げに通知します。
-- `prefers-reduced-motion` でアニメーション・スムーズスクロールを抑制します。
-- スマートフォンでは1列、PCでは最大3列のカード配置です。
+自動表示テストを再実行する場合は、プレビューサーバーを起動したうえで `npm install --no-save --package-lock=false playwright` と `node tests/browser.cjs` を実行します。Windows上のChrome/Edgeを自動検出します。別のブラウザーパスは `CHROME_PATH` 環境変数で指定でき、それ以外では `npx playwright install chromium` が必要です。テスト用レコードはHTTP応答の差し替えだけに使用し、公開JSONには保存しません。スクリーンショットはGit管理外の `.qa/` に保存します。
